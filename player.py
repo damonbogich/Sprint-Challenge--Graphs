@@ -9,3 +9,10 @@ class Player:
                 next_room.print_room_description(self)
         else:
             print("You cannot move in that direction.")
+
+    #lets try to write a function that could be used to pass the first test in player
+    #let's only print in player
+    def traverse(self):
+        pass
+
+

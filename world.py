@@ -9,22 +9,30 @@ class World:
         self.room_grid = []
         self.grid_size = 0
     def load_graph(self, room_graph):
-        num_rooms = len(room_graph)
-        rooms = [None] * num_rooms
+        num_rooms = len(room_graph) #3
+        rooms = [None] * num_rooms # [None, None, None]
         grid_size = 1
         for i in range(0, num_rooms):
-            x = room_graph[i][0][0]
-            grid_size = max(grid_size, room_graph[i][0][0], room_graph[i][0][1])
-            self.rooms[i] = Room(f"Room {i}", f"({room_graph[i][0][0]},{room_graph[i][0][1]})",i, room_graph[i][0][0], room_graph[i][0][1])
+            x = room_graph[i][0][0] #3 ##first index of tuple (3, 5), {'n': 1} for every room's value
+            grid_size = max(grid_size, room_graph[i][0][0], room_graph[i][0][1]) #second number in tuple
+            # print('grid_size', grid_size)
+            self.rooms[i] = Room(f"Room {i}", f"({room_graph[i][0][0]},{room_graph[i][0][1]})",i, room_graph[i][0][0], room_graph[i][0][1]) #
+            # room 0 ... (3,5) .... exits = []... creating room  
+            
         self.room_grid = []
         grid_size += 1
         self.grid_size = grid_size
         for i in range(0, grid_size):
             self.room_grid.append([None] * grid_size)
+            
+            #self.room grid = List of 8 list with 8 None values
         for room_id in room_graph:
             room = self.rooms[room_id]
+            print('1st room', room)
             self.room_grid[room.x][room.y] = room
+            print(self.room_grid[room.y])
             if 'n' in room_graph[room_id][1]:
+                print('here', self.rooms[room_graph[room_id][1]['n']])
                 self.rooms[room_id].connect_rooms('n', self.rooms[room_graph[room_id][1]['n']])
             if 's' in room_graph[room_id][1]:
                 self.rooms[room_id].connect_rooms('s', self.rooms[room_graph[room_id][1]['s']])
@@ -32,7 +40,7 @@ class World:
                 self.rooms[room_id].connect_rooms('e', self.rooms[room_graph[room_id][1]['e']])
             if 'w' in room_graph[room_id][1]:
                 self.rooms[room_id].connect_rooms('w', self.rooms[room_graph[room_id][1]['w']])
-        self.starting_room = self.rooms[0]
+        self.starting_room = self.rooms[0] #creates graph
 
     def print_rooms(self):
         rotated_room_grid = []
