@@ -18,16 +18,39 @@ map_file = "maps/test_line.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
-world.load_graph(room_graph)
+# print('roooooom', room_graph)
+# print('roijn', room_graph[0][1]['n'])
+
+#making a traversal graph out of room graph
+get_rid_of_coordinates = {}
+
+for key, value in room_graph.items():
+    get_rid_of_coordinates[key] = value[1]
+# print('convert', get_rid_of_coordinates)
+
+traversal_graph = {key: {k: '?' for k in dct} for key, dct in get_rid_of_coordinates.items()}
+# print('traversal graph', traversal_graph)
+# print('traverrrr', traversal_graph[0]['n'] == '?')
+
+
+
+world.load_graph(room_graph) #creates room graph
+
 
 # Print an ASCII map
-world.print_rooms()
+world.print_rooms() #creates rooms and lines between them
 
-player = Player(world.starting_room)
+player = Player(world.starting_room) #player instantiated starting in room 0
+print('curr', player.current_room)
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
 traversal_path = []
+
+
+#player.currentroom is room object where player is player.current_room.id is room number
+# player.current_room.get_exits() list with all possible directions player can move
+player.dft()
 
 
 

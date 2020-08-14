@@ -24,15 +24,16 @@ class World:
         self.grid_size = grid_size
         for i in range(0, grid_size):
             self.room_grid.append([None] * grid_size)
+            # print(i, len(self.room_grid))
             
             #self.room grid = List of 8 list with 8 None values
         for room_id in room_graph:
             room = self.rooms[room_id]
-            print('1st room', room)
+            # print('1st room', room)
             self.room_grid[room.x][room.y] = room
-            print(self.room_grid[room.y])
+            # print(self.room_grid[room.y])
             if 'n' in room_graph[room_id][1]:
-                print('here', self.rooms[room_graph[room_id][1]['n']])
+                # print('here', self.rooms[room_graph[room_id][1]['n']])
                 self.rooms[room_id].connect_rooms('n', self.rooms[room_graph[room_id][1]['n']])
             if 's' in room_graph[room_id][1]:
                 self.rooms[room_id].connect_rooms('s', self.rooms[room_graph[room_id][1]['s']])
