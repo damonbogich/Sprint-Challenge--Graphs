@@ -10,8 +10,8 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-map_file = "maps/test_line.txt"
-# map_file = "maps/test_cross.txt"
+# map_file = "maps/test_line.txt"
+map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
 # map_file = "maps/main_maze.txt"
@@ -29,7 +29,7 @@ for key, value in room_graph.items():
 # print('convert', get_rid_of_coordinates)
 
 traversal_graph = {key: {k: '?' for k in dct} for key, dct in get_rid_of_coordinates.items()}
-# print('traversal graph', traversal_graph)
+print('traversal graph', traversal_graph)
 # print('traverrrr', traversal_graph[0]['n'] == '?')
 
 
@@ -50,7 +50,7 @@ traversal_path = []
 
 #player.currentroom is room object where player is player.current_room.id is room number
 # player.current_room.get_exits() list with all possible directions player can move
-player.dft()
+player.dft(traversal_path, traversal_graph)
 
 
 
