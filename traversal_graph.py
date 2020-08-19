@@ -65,35 +65,40 @@ class Traversal_Graph():
         return self.player.current_room.get_exits()
     def dft(self, path):
         #set player's current room to variable
+        stack = Stack()
         current_room = self.player.current_room.id
+        stack.push(current_room)
 
         #add current room to graph: {{current_room: {n: "?", s: "?"}}}
         #only adds directions that can be traveled in 
         self.add_room(current_room)
         print('herehhe', self.rooms)
-        #unexplored_directions is a list of exit directions that have not yet been traveled
-        unexplored_directions = [k for k,v in self.rooms[current_room].items() if v == '?']
-        #now we want to pick a random unexplored direction from unexplored_directions
-        random_direction = random.choice(unexplored_directions)
-        #now we want to travel that direction
-        self.player.travel(random_direction)
-        # and log random_direction in steps traveled -- add to traversal path
-        path.append(random_direction)
-        #also need to update our graph
-        self.add_edge(current_room, random_direction, self.player.current_room.id)
-        # self.rooms[current_room][random_direction] = self.player.current_room.id
-        print('diciin', self.rooms)
+        visited = list()
+        while stack.size() > 0:
+            current_room = stack.pop()
+            if current_room not in visited:
+                visited.append(current_room)
+            #unexplored_directions is a list of exit directions that have not yet been traveled
+                unexplored_directions = [k for k,v in self.rooms[current_room].items() if v == '?']
+                #now we want to pick a random unexplored direction from unexplored_directions
+                if len(unexplored_directions) > 0:
+                    random_direction = random.choice(unexplored_directions)
+                    #now we want to travel that direction
+                    self.player.travel(random_direction)
+                    # and log random_direction in steps traveled -- add to traversal path
+                    path.append(random_direction)
+                    #also need to update our graph
+                    self.add_edge(current_room, random_direction, self.player.current_room.id)
+                    # self.rooms[current_room][random_direction] = self.player.current_room.id
+                    print('diciin', self.rooms)
+                    stack.push(self.player.current_room.id)
 
 
-        #update current room
-        current_room = self.player.current_room.id
-        print(current_room)
+            # #update current room???
+            # current_room = self.player.current_room.id
+            # print(current_room)
         
-
-        #then travel and log that direction(log both ways)
-
-        #pick a random unexplored direction from the player's current room, 
-        #travels and log that direction, then loop.
+        # then loop.
 
         #when you reach a dead-end (i.e. a room with no unexplored paths)
         #walk back to the nearest room that does contain an unexplored path.
