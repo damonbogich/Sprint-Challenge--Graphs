@@ -1,6 +1,7 @@
 from room import Room
 from player import Player
 from world import World
+from traversal_graph import Traversal_Graph
 
 import random
 from ast import literal_eval
@@ -21,15 +22,17 @@ room_graph=literal_eval(open(map_file, "r").read())
 # print('roooooom', room_graph)
 # print('roijn', room_graph[0][1]['n'])
 
-#making a traversal graph out of room graph
-get_rid_of_coordinates = {}
 
-for key, value in room_graph.items():
-    get_rid_of_coordinates[key] = value[1]
+
+#making a traversal graph out of room graph
+# get_rid_of_coordinates = {}
+
+# for key, value in room_graph.items():
+#     get_rid_of_coordinates[key] = value[1]
 # print('convert', get_rid_of_coordinates)
 
-traversal_graph = {key: {k: '?' for k in dct} for key, dct in get_rid_of_coordinates.items()}
-print('traversal graph', traversal_graph)
+# traversal_graph = {key: {k: '?' for k in dct} for key, dct in get_rid_of_coordinates.items()}
+# print('traversal graph', traversal_graph)
 # print('traverrrr', traversal_graph[0]['n'] == '?')
 
 
@@ -47,10 +50,13 @@ print('curr', player.current_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 
+traversal_graph = Traversal_Graph(player)
+traversal_graph.dft(traversal_path)
+
 
 #player.currentroom is room object where player is player.current_room.id is room number
 # player.current_room.get_exits() list with all possible directions player can move
-player.dft(traversal_path, traversal_graph)
+
 
 
 

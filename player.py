@@ -15,45 +15,53 @@ class Player:
 
     
     
-    def dft(self, traversal_path, traversal_graph):
-        stack = Stack() #how can i use the stack????  Add rooms that we visit to it
+   
+   
+   
+   
+   
+   
+   
+   
+    # def dft(self, traversal_path, traversal_graph):
+    #     stack = Stack() #how can i use the stack????  Add rooms that we visit to it
 
-        #list of exits
-        exits = self.current_room.get_exits()
-        # #random exit from list of exits
-        # random_exit_direction = random.choice(exits)    what is the point of randomizing???
+    #     #list of exits
+    #     exits = self.current_room.get_exits()
+    #     # #random exit from list of exits
+    #     # random_exit_direction = random.choice(exits)    what is the point of randomizing???
 
-        #push random direction onto stack --- I think this is wrong what goes on stack?????
-        stack.push({self.current_room.id : exits})
-        print(stack.stack)
+    #     #push random direction onto stack --- I think this is wrong what goes on stack?????
+    #     stack.push({self.current_room.id : exits})
+    #     print(stack.stack)
 
-        while stack.size() > 0:
-            #pop room and exits off of stack
-            room_and_directions = stack.pop() #dictionary {roomid: [possible directions]}
-            directions = room_and_directions[self.current_room.id] #list of possible directions
-            print('directions',directions)
-            #remove first direction and move that way:
-            first_direction = directions[0]
-            # for i in directions:
-            #     if traversal_graph[self.current_room.id][i] == '?':
-            #         first_direction = directions[i]
+    #     while stack.size() > 0:
+    #         #pop room and exits off of stack
+    #         room_and_directions = stack.pop() #dictionary {roomid: [possible directions]}
+    #         directions = room_and_directions[self.current_room.id] #list of possible directions
+    #         print('directions',directions)
+    #         #remove first direction and move that way:
+    #         first_direction = directions[0]
+    #         # for i in directions:
+    #         #     if traversal_graph[self.current_room.id][i] == '?':
+    #         #         first_direction = directions[i]
 
             
 
-            if traversal_graph[self.current_room.id][first_direction] == '?':
-                current_room = self.current_room.id
-                self.travel(first_direction)
-                #add direction traveled 
-                #change ? to the room we arrive in 
-                traversal_path.append(first_direction)
-                traversal_graph[current_room][first_direction] = self.current_room.id
-                print('traversal_graph', traversal_graph)
-                # print('traversal graph', traversal_graph)
-                # print('current_room', self.current_room.id)
+    #         if traversal_graph[self.current_room.id][first_direction] == '?':
+    #             current_room = self.current_room.id
+    #             self.travel(first_direction)
+    #             #add direction traveled 
+    #             #change ? to the room we arrive in 
+    #             traversal_path.append(first_direction)
+    #             traversal_graph[current_room][first_direction] = self.current_room.id
+    #             print('traversal_graph', traversal_graph)
+    #             # print('traversal graph', traversal_graph)
+    #             # print('current_room', self.current_room.id)
                 
-                new_exits = self.current_room.get_exits()
-                stack.push({self.current_room.id : new_exits})
+    #             new_exits = self.current_room.get_exits()
+    #             stack.push({self.current_room.id : new_exits})
                
-        return traversal_path
+    #     return traversal_path
 
 
