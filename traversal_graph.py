@@ -49,14 +49,23 @@ class Traversal_Graph():
             self.rooms[new_room]['e'] = current_room
         elif direction == 'e':
             self.rooms[new_room]['w'] = current_room
-    def get_neighbors(self, room):
+    def check_graph(self):
         """
         Get all neighbors (edges) of a vertex.
         Returns the directions that can be traveled
         from current room
         """
-        #TODO: this function
-        # return self.rooms[room_id]
+        done = False
+        empty = []
+        for key in self.rooms:
+            empty.append(key)
+        for i in empty:
+            if "?" not in self.rooms[i].values():
+                done = True
+            return done
+
+
+    
 
     def get_exits(self):
         """
@@ -64,47 +73,47 @@ class Traversal_Graph():
         """
         return self.player.current_room.get_exits()
     def dft(self, path):
-        #experimental:
-        #set player's current room to variable
+        
         stack = Stack()
         current_room = self.player.current_room.id
         stack.push(current_room)
-
-        #add current room to graph: {{current_room: {n: "?", s: "?"}}}
-        #only adds directions that can be traveled in 
+        visited = []
         self.add_room(current_room)
-        print('herehhe', self.rooms)
-        visited = list()
+        # print('herehhe', self.rooms)
+
         while stack.size() > 0:
+            print(self.rooms)
             current_room = stack.pop()
-            if current_room not in visited:
+            # if current_room not in visited:
+            #     visited.append(current_room)
+            
+            unexplored_directions = [k for k,v in self.rooms[current_room].items() if v == '?']
+            
+            if len(unexplored_directions) > 0:
+                random_direction = random.choice(unexplored_directions)
+                
+                self.player.travel(random_direction)
+                
+                path.append(random_direction)
+        
+                self.add_edge(current_room, random_direction, self.player.current_room.id)
+            
+                # print('diciin', self.rooms)
+                stack.push(self.player.current_room.id)
+                
+                print('hereh', self.check_graph())
+            elif self.check_graph() == True:
+                break
+        
+            else:
                 visited.append(current_room)
-            #unexplored_directions is a list of exit directions that have not yet been traveled
-                unexplored_directions = [k for k,v in self.rooms[current_room].items() if v == '?']
-                #now we want to pick a random unexplored direction from unexplored_directions
-                if len(unexplored_directions) > 0:
-                    random_direction = random.choice(unexplored_directions)
-                    #now we want to travel that direction
-                    self.player.travel(random_direction)
-                    # and log random_direction in steps traveled -- add to traversal path
-                    path.append(random_direction)
-                    #also need to update our graph
-                    self.add_edge(current_room, random_direction, self.player.current_room.id)
-                    # self.rooms[current_room][random_direction] = self.player.current_room.id
-                    print('diciin', self.rooms)
-                    stack.push(self.player.current_room.id)
-                #elif check current room's available directions and walk that way if there is a '?' value
-                    #if no '?' value then just walk a random way until room with '?' is found
-                else:
-                    #going to check all of the current room's direction values
-                    #look at them in the graph self.rooms[value]
-                        #if one of them has a '?' as a value, we will move to that one and put it on stack
-                    for direction in self.bfs(self.player.current_room.id, path):
-                        self.player.travel(direction)
-                        path.append(direction)
-                    print('path',path)
-                    print(self.player.current_room.id)
-                    stack.push(self.player.current_room.id)
+
+                for direction in self.bfs(self.player.current_room.id, path):
+                    self.player.travel(direction)
+                    path.append(direction)
+                # print('path',path)
+                # print('current_room', self.player.current_room.id)
+                stack.push(self.player.current_room.id)
                         
                     
 
@@ -136,7 +145,7 @@ class Traversal_Graph():
                 #if last room not in visited, we need to figure out the directions that were taken,
                 #to travel this path
                 if "?" in self.rooms[last_room].values():
-                    print(visited)
+                    # print(visited)
                     return visited  #should as a list of rooms where last one has "?" val
 
                 
@@ -165,7 +174,7 @@ class Traversal_Graph():
 
                     exit_paths.append(removed_path.copy()) #[['1']]
                     exit_paths[i].append(neighbor_list[i]) #[['2', '1']]
-                    print('exit paths', exit_paths)
+                    # print('exit paths', exit_paths)
 
                 for exits in exit_paths:
                     q.enqueue(exits)
@@ -182,7 +191,7 @@ class Traversal_Graph():
         # If all paths have been explored, you're done!
 
 
-            pass
+           
 
 
 
