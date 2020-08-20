@@ -44,7 +44,7 @@ world.load_graph(room_graph) #creates room graph
 world.print_rooms() #creates rooms and lines between them
 
 player = Player(world.starting_room) #player instantiated starting in room 0
-print('curr', player.current_room)
+# print('curr', player.current_room)
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
