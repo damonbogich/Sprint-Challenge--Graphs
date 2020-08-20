@@ -11,8 +11,8 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-map_file = "maps/test_line.txt"
-# map_file = "maps/test_cross.txt"
+# map_file = "maps/test_line.txt"
+map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
 # map_file = "maps/main_maze.txt"
@@ -51,6 +51,7 @@ print('curr', player.current_room)
 traversal_path = []
 
 traversal_graph = Traversal_Graph(player)
+
 traversal_graph.dft(traversal_path)
 
 
