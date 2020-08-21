@@ -3,7 +3,7 @@ import random
 
 from player import Player
 
-class Traversal_Graph():
+class Traversal_GraphT():
     def __init__(self, player):
         """
         vertices are all of the seperate rooms.
@@ -108,95 +108,85 @@ class Traversal_Graph():
                 break
         
             else:
-                
-                #returns path from current room to room with ?
-                returned_path = self.bfs(current_room)
-                #removes first room from returned path
-                returned_path.pop(0)
-                print('returned_path', returned_path)
+                visited.append(current_room)
 
-
-                #create new list to store directions to desired room
-                direction_path = []
-            
-                for i in range(len(returned_path)):
-                    #takes keys from self.rooms at current room
-                    for key in self.rooms[current_room]:
-                        #check if current room has a direction that equals first
-                        #item in path
-                        
-                        if self.rooms[current_room][key] == returned_path[i]:
-                            #add that key to dictionary
-                            direction_path.append(key)
-                            #current room gets updated to wherever
-                            #item in returned_path is being looked at
-                            current_room = returned_path[i]
-                       
-
-
-                #add directions to path and add player's new 
-                #current room to stack
-                for direction in direction_path:
+                for direction in self.bfs(self.player.current_room.id, path):
                     self.player.travel(direction)
                     path.append(direction)
-                print('player room id',self.player.current_room.id )
+                
                 stack.push(self.player.current_room.id)
-
-
-
-                
-                
-                
+                        
                     
 
 
     
-    def bfs(self, starting_room):
+    def bfs(self, starting_room, path):
         """
         Return a list containing the shortest path from
         starting_vertex to destination_vertex in
         breath-first order.
         """
-        #needs to result in directions to room with "?" as a value
        
         q = Queue()
-        #enqueue the room that is a dead_end
+       
         q.enqueue([starting_room])
-        #list of visited rooms.... last room from path
+        
+        path_back = list()
+
         visited = list()
 
-
         while q.size() > 0:
-            #first path from queue
+           
             removed_path = q.dequeue() 
-            #last room from path
+
             last_room = removed_path[len(removed_path) - 1]
-            
-            if last_room not in visited:
-                #if last room has "?" value it is the destination
-                if "?" in self.rooms[last_room].values():
-                    #path of rooms
-                    return removed_path
-                #add current room to visited
-                visited.append(last_room)
 
-            #neighbors will be rooms that are near... find them by checking dictionary for values
+            visited.append(last_room)
+
+            
+                
+            if "?" in self.rooms[last_room].values():
+                
+                return path_back  
+            
+            # elif self.check_graph() == True:
+            #     break
+            # exits = self.get_exits() 
             exits = self.get_room_exits(last_room)
-
-            neighbors = []
-
+            viable_exits = []
             for exitt in exits:
-                neighbors.append(self.rooms[last_room][exitt])
-            
-            #going to result in a list of paths to neighbors from starting room
-            neighbor_paths = []
+                if self.rooms[last_room][exitt] not in visited:
+                    viable_exits.append(exitt)
 
-            for i in range(len(neighbors)):
-                neighbor_list = list(neighbors)
+
+            neighbor_list = []
+            real_neighbor_list = []
+            for exitt in viable_exits:
+                neighbor_list.append(self.rooms[last_room][exitt])
+                # path_back.append(exitt) #<--- when this comes back 
+            #checks if more than one neighbor
+            if len(neighbor_list) > 1:
+                #loops through neighbors
+                for neighbor in neighbor_list:
+                    #checks for neighbor with "?" value
+                    if "?" in self.rooms[neighbor].values():
+                        #new list to add the 
+                        real_neighbor_list.append(neighbor)
+                for key in self.rooms[last_room]:
+                    if self.rooms[last_room][key] == real_neighbor_list[0]:
+                        path_back.append(key)
+                        viable_exits = list(key)
+            else:
+                real_neighbor_list = neighbor_list
+                path_back.append(viable_exits[0])
+
+            exit_paths = []
+
+            for i in range(len(viable_exits)):
                 
 
-                neighbor_paths.append(removed_path.copy()) 
-                neighbor_paths[i].append(neighbor_list[i]) 
+                exit_paths.append(removed_path.copy()) 
+                exit_paths[i].append(real_neighbor_list[i]) 
 
-            for path in neighbor_paths:
-                q.enqueue(path)
+            for exits in exit_paths:
+                q.enqueue(exits)

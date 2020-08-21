@@ -2,6 +2,7 @@ from room import Room
 from player import Player
 from world import World
 from traversal_graph import Traversal_Graph
+from traversal_graph2 import Traversal_GraphT
 
 import random
 from ast import literal_eval
@@ -53,6 +54,11 @@ traversal_path = []
 traversal_graph = Traversal_Graph(player)
 
 traversal_graph.dft(traversal_path)
+
+# traversal_graph2 = Traversal_GraphT(player)
+
+# traversal_graph2.dft(traversal_path)
+
 
 
 #player.currentroom is room object where player is player.current_room.id is room number
