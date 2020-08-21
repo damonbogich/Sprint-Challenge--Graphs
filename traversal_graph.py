@@ -27,6 +27,8 @@ class Traversal_Graph():
         self.rooms[current_room] = {}
         for exxit in room_exits:
             self.rooms[current_room][exxit] = "?"
+    def get_room_exits(self, room):
+        return list(self.rooms[room].keys())
     def add_edge(self, current_room, direction, new_room):
         """
         Add a directed edge to the graph.
@@ -55,14 +57,16 @@ class Traversal_Graph():
         Returns the directions that can be traveled
         from current room
         """
-        done = False
+        done = True
         empty = []
         for key in self.rooms:
             empty.append(key)
-        for i in empty:
-            if "?" not in self.rooms[i].values():
-                done = True
-            return done
+        for i in empty:                         
+            if "?" in self.rooms[i].values():
+                print('room', self.player.current_room.id)
+                print('check', self.rooms[i].values())
+                done = False
+        return done
 
 
     
@@ -127,7 +131,10 @@ class Traversal_Graph():
        
         q.enqueue([starting_room])
         
+        path_back = list()
+
         visited = list()
+        
 
         while q.size() > 0:
            
@@ -135,24 +142,36 @@ class Traversal_Graph():
 
             last_room = removed_path[len(removed_path) - 1]
 
-            if last_room not in visited:
+            visited.append(last_room)
+
+            
                 
-                if "?" in self.rooms[last_room].values():
-                    
-                    return visited  
-                exits = self.get_exits() 
-                neighbor_list = []
-                for exitt in exits:
-                    neighbor_list.append(self.rooms[last_room][exitt])
-                    visited.append(exitt)
-           
-                exit_paths = []
+            if "?" in self.rooms[last_room].values():
+                
+                return path_back  
+            
+            # elif self.check_graph() == True:
+            #     break
+            # exits = self.get_exits() 
+            exits = self.get_room_exits(last_room)
+            viable_exits = []
+            for exitt in exits:
+                if self.rooms[last_room][exitt] not in visited:
+                    viable_exits.append(exitt)
 
-                for i in range(len(exits)):
-                 
 
-                    exit_paths.append(removed_path.copy()) 
-                    exit_paths[i].append(neighbor_list[i]) 
+            neighbor_list = []
+            for exitt in viable_exits:
+                neighbor_list.append(self.rooms[last_room][exitt])
+                path_back.append(exitt)
+        
+            exit_paths = []
 
-                for exits in exit_paths:
-                    q.enqueue(exits)
+            for i in range(len(viable_exits)):
+                
+
+                exit_paths.append(removed_path.copy()) 
+                exit_paths[i].append(neighbor_list[i]) 
+
+            for exits in exit_paths:
+                q.enqueue(exits)
