@@ -124,7 +124,8 @@ class Traversal_Graph():
                     for key in self.rooms[current_room]:
                         #check if current room has a direction that equals first
                         #item in path
-                        
+                        print('key', key)
+                        print('currentroom', self.rooms[current_room])
                         if self.rooms[current_room][key] == returned_path[i]:
                             #add that key to dictionary
                             direction_path.append(key)
