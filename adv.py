@@ -1,10 +1,10 @@
 from room import Room
 from player import Player
 from world import World
-# from traversal_graph import Traversal_Graph
+from traversal_graph import Traversal_Graph
 # from traversal_graph2 import Traversal_GraphT
 # from traversal_graph3 import Traversal_Graph
-from traversal_graph4 import Traversal_Graph
+# from traversal_graph4 import Traversal_Graph
 
 import random
 from ast import literal_eval
