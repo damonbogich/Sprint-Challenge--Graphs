@@ -1,7 +1,5 @@
-from util import Stack, Queue
-import random
-
 from player import Player
+from util import Stack, Queue
 
 class Traversal_Graph():
     def __init__(self, player):
@@ -12,6 +10,9 @@ class Traversal_Graph():
         """
         self.rooms = {}
         self.player = player
+        self.stack = Stack()
+        self.queue = Queue()
+        self.opposite_directions = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
         
     def add_room(self, current_room):
         """
@@ -27,49 +28,13 @@ class Traversal_Graph():
         self.rooms[current_room] = {}
         for exxit in room_exits:
             self.rooms[current_room][exxit] = "?"
+            
     def get_room_exits(self, room):
         return list(self.rooms[room].keys())
-    def add_edge(self, current_room, direction, new_room):
-        """
-        Add a directed edge to the graph.
-        Edges are created when '?' value is
-        changed to a room #
-        """
-        self.rooms[current_room][direction] = new_room
-        #if room traveled to is not in graph
-            #add it to graph
-        if new_room not in self.rooms.keys():
-            self.add_room(new_room)
 
-        #fill in the room that was traveled from into this
-        #room's dictionary
-        if direction == 'n':
-            self.rooms[new_room]['s'] = current_room
-        elif direction == 's':
-            self.rooms[new_room]['n'] = current_room
-        elif direction == 'w':
-            self.rooms[new_room]['e'] = current_room
-        elif direction == 'e':
-            self.rooms[new_room]['w'] = current_room
-    def check_graph(self):
-        """
-        Get all neighbors (edges) of a vertex.
-        Returns the directions that can be traveled
-        from current room
-        """
-        done = True
-        empty = []
-        for key in self.rooms:
-            empty.append(key)
-        for i in empty:                         
-            if "?" in self.rooms[i].values():
-                print('room', self.player.current_room.id)
-                print('check', self.rooms[i].values())
-                done = False
-        return done
-
-
-    
+    def get_unexplored_directions(self, current_room):
+        unexplored_directions = [k for k,v in self.rooms[current_room].items() if v == '?']
+        return unexplored_directions
 
     def get_exits(self):
         """
@@ -78,109 +43,112 @@ class Traversal_Graph():
         return self.player.current_room.get_exits()
     def dft(self, path):
         
-        stack = Stack()
+        stack = self.stack
+        starting_room = self.player.current_room.id
+        # stack.push(starting_room)
+        self.add_room(starting_room)
+        
+        #figure out what direction to travel.
+        unexplored_exits = self.get_room_exits(starting_room)
+        #pick an exit from unexplored exits for player to travel
+        travel_direction = unexplored_exits.pop()
+        #send player to travel in that direction and add that direction to graph
+        #travel:
+        self.player.travel(travel_direction)
+        path.append(travel_direction)
+        #get player's new current room:
         current_room = self.player.current_room.id
-        stack.push(current_room)
+        #add direction to graph:
+        self.rooms[starting_room][travel_direction] = current_room
+        #after traveling:
+        #we want to add opposite travel direction to stack
+        stack.push(self.opposite_directions[travel_direction])
+   
+        #We want to add new room to graph, and make sure it contains the room traveled from
         self.add_room(current_room)
+        #good way to add room left to new room's object???
+        self.rooms[current_room][self.opposite_directions[travel_direction]] = starting_room
+        print('rooms graph', self.rooms)
 
+        #start loopppping
+        #check to see if current room has any directions it has not traveled in yet,
+        #if it does, then we will travel in one of those directions and continue filling out graph
+        #if it does not then we will start popping from the stack
 
         while stack.size() > 0:
-  
-            current_room = stack.pop()
-       
-            
-            unexplored_directions = [k for k,v in self.rooms[current_room].items() if v == '?']
-            
-            if len(unexplored_directions) > 0:
-                random_direction = random.choice(unexplored_directions)
-                
-                self.player.travel(random_direction)
-                
-                path.append(random_direction)
-        
-                self.add_edge(current_room, random_direction, self.player.current_room.id)
-            
-  
-                stack.push(self.player.current_room.id)
-   
-            elif self.check_graph() == True:
-                break
-        
-            else:
-                
-                #returns path from current room to room with ?
-                returned_path = self.bfs(current_room)
-                print('returned', returned_path)
-                direction_path = []
 
-               
+            #all within while loop:
+            current_room = self.player.current_room.id
+            unexplored_directions_list = self.get_unexplored_directions(current_room)
 
-                for i in range(len(returned_path)):
-                    print(self.rooms[returned_path[i]].items())
-                       
+            if len(unexplored_directions_list) > 0:
+                print(unexplored_directions_list)
+                explore_direction = unexplored_directions_list.pop()
+                print(explore_direction)
+                #want to move in that direction
+                self.player.travel(explore_direction)
+                path.append(explore_direction)
+                new_room = self.player.current_room.id
+                #add the direction explored to old room's object
+                self.rooms[current_room][explore_direction] = new_room
+                #add opposite of explored direction to stack 
+                self.stack.push(self.opposite_directions[explore_direction])
+
+                #add room we get to into graph, with room we came from included
+                #check if new room is in graph
+                if new_room not in self.rooms:
+                    self.add_room(new_room)
                     
+                self.rooms[new_room][self.opposite_directions[explore_direction]] = current_room
+                print(self.rooms)
                 
-                return
+                print('stack', self.stack.stack)
+            
+            else: #if no unexplored directions from here!!!!!!!!
+                # we want to move back using the directions in the stack until we find room with "?"
+                # pop direction off of the stack, have player move there, then re loop 
+                back_direction = stack.pop()
+                print('back direction', back_direction)
+                self.player.travel(back_direction)
+                path.append(back_direction)
+                #we're back to original rooms, but stack is empty so while loop doesn't run
+                current_room = self.player.current_room.id
+                unexplored_directions_list = self.get_unexplored_directions(current_room)
+                if len(unexplored_directions_list) > 0:
+                    #need to move that way and get something on stack
+                    
+                    travel_direction = unexplored_directions_list.pop()
 
+                    self.player.travel(travel_direction)
+            
+                    #add travel direction to path
+                    path.append(travel_direction)
+                    #add opposite of travel direction to stack
+                    stack.push(self.opposite_directions[travel_direction])
 
-                
-                
-
-
-
-                
-                
-                
+                    new_room = self.player.current_room.id
+                   
+                    #add new room to graph;
+                    self.add_room(new_room)
+                    #Adds new room to old room's object
+                    self.rooms[current_room][travel_direction] = new_room
+                    #add previous room to new room's object
+                    self.rooms[new_room][self.opposite_directions[travel_direction]] = current_room
                     
 
 
-    
-    def bfs(self, starting_room):
-        """
-        Return a list containing the shortest path from
-        starting_vertex to destination_vertex in
-        breath-first order.
-        """
-        #needs to result in directions to room with "?" as a value
+
+            
+ 
+
+        
+        #travel in one of the directions and add that direction to the stack
+
+        # while stack.size() > 0:
+
+  
+            
        
-        q = Queue()
-        #enqueue the room that is a dead_end
-        q.enqueue([starting_room])
-        #list of visited rooms.... last room from path
-        visited = list()
+            # unexplored directions all that needs to do is populate that list with any room exit directions of a current room that still has a ? as a value and then instead of choosing a random one I would just pop one off the end
 
-
-        while q.size() > 0:
-            #first path from queue
-            removed_path = q.dequeue() 
-            #last room from path
-            last_room = removed_path[len(removed_path) - 1]
-            
-            if last_room not in visited:
-                #if last room has "?" value it is the destination
-                if "?" in self.rooms[last_room].values():
-                    #path of rooms
-                    return removed_path
-                #add current room to visited
-                visited.append(last_room)
-
-            #neighbors will be rooms that are near... find them by checking dictionary for values
-            exits = self.get_room_exits(last_room)
-
-            neighbors = []
-
-            for exitt in exits:
-                neighbors.append(self.rooms[last_room][exitt])
-            
-            #going to result in a list of paths to neighbors from starting room
-            neighbor_paths = []
-
-            for i in range(len(neighbors)):
-                neighbor_list = list(neighbors)
-                
-
-                neighbor_paths.append(removed_path.copy()) 
-                neighbor_paths[i].append(neighbor_list[i]) 
-
-            for path in neighbor_paths:
-                q.enqueue(path)
+            # unexplored_directions = [k for k,v in self.rooms[current_room].items() if v == '?']

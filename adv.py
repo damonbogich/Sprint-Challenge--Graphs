@@ -1,10 +1,10 @@
 from room import Room
 from player import Player
 from world import World
-from traversal_graph import Traversal_Graph
+# from traversal_graph import Traversal_Graph
 # from traversal_graph2 import Traversal_GraphT
 # from traversal_graph3 import Traversal_Graph
-# from traversal_graph4 import Traversal_Graph
+from traversal_graph4 import Traversal_Graph
 
 import random
 from ast import literal_eval
@@ -17,8 +17,8 @@ world = World()
 # map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
-map_file = "maps/test_loop_fork.txt"
-# map_file = "maps/main_maze.txt"
+# map_file = "maps/test_loop_fork.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
